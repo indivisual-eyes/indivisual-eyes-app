@@ -1,11 +1,12 @@
 import { CameraView, useCameraPermissions } from 'expo-camera'
-import { Platform, View } from 'react-native'
+import { Image, Platform, View } from 'react-native'
 import { useRef, useState } from 'react'
 
 import { getUrl } from '@/lib/url'
 import { Button } from '~/components/ui/button'
 import { Text } from '~/components/ui/text'
 import { SlidersHorizontal } from '~/lib/icons/SlidersHorizontal'
+import { ArrowLeft } from '~/lib/icons/ArrowLeft'
 
 export default function App() {
     const [permission, requestPermission] = useCameraPermissions()
@@ -17,14 +18,14 @@ export default function App() {
         return <View/>
     }
 
-    // if (!permission.granted) {
-    //     return (
-    //         <View style={styles.container}>
-    //             <Text style={styles.message}>We need your permission to show the camera</Text>
-    //             <Button onPress={requestPermission}><Text>'Grant permission</Text></Button>
-    //         </View>
-    //     )
-    // }
+    if (!permission.granted) {
+        return (
+            <View className={'flex-1'}>
+                <Text>We need your permission to show the camera</Text>
+                <Button onPress={requestPermission}><Text>Grant permission</Text></Button>
+            </View>
+        )
+    }
 
     async function takePicture() {
         if (cameraRef.current) {
@@ -76,21 +77,19 @@ export default function App() {
         setImage(undefined)
     }
 
-    // if (image) {
-    //     return (
-    //         <View style={styles.container}>
-    //             <View style={styles.camera}>
-    //                 <Image source={{ uri: image }} style={styles.camera}/>
-    //                 <TouchableOpacity style={styles.button} onPress={sendImage}>
-    //                     <Text style={styles.text}>Upload image</Text>
-    //                 </TouchableOpacity>
-    //                 <TouchableOpacity style={styles.button} onPress={resetImage}>
-    //                     <Text style={styles.text}>Back</Text>
-    //                 </TouchableOpacity>
-    //             </View>
-    //         </View>
-    //     )
-    // }
+    if (image) {
+        return (
+            <View className={'flex-1'}>
+                <View className={'flex-1 w-full'}>
+                    <Image className={'flex-1 w-full h-full'} source={{ uri: image }}/>
+                </View>
+                <View className={'w-full p-4 flex-row gap-4 justify-between items-center'}>
+                    <Button className={''} onPress={sendImage}><Text>Upload image</Text></Button>
+                    <Button className={''} size={'icon'} variant={'secondary'} onPress={resetImage}><ArrowLeft className={'text-primary'}/></Button>
+                </View>
+            </View>
+        )
+    }
 
     return (
         <View className={'flex-1'}>
