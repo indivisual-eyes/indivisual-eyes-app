@@ -1,8 +1,11 @@
 import { CameraView, useCameraPermissions } from 'expo-camera'
-import { Button, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Platform, View } from 'react-native'
 import { useRef, useState } from 'react'
 
 import { getUrl } from '@/lib/url'
+import { Button } from '~/components/ui/button'
+import { Text } from '~/components/ui/text'
+import { SlidersHorizontal } from '~/lib/icons/SlidersHorizontal'
 
 export default function App() {
     const [permission, requestPermission] = useCameraPermissions()
@@ -14,14 +17,14 @@ export default function App() {
         return <View/>
     }
 
-    if (!permission.granted) {
-        return (
-            <View style={styles.container}>
-                <Text style={styles.message}>We need your permission to show the camera</Text>
-                <Button onPress={requestPermission} title='grant permission'/>
-            </View>
-        )
-    }
+    // if (!permission.granted) {
+    //     return (
+    //         <View style={styles.container}>
+    //             <Text style={styles.message}>We need your permission to show the camera</Text>
+    //             <Button onPress={requestPermission}><Text>'Grant permission</Text></Button>
+    //         </View>
+    //     )
+    // }
 
     async function takePicture() {
         if (cameraRef.current) {
@@ -73,61 +76,31 @@ export default function App() {
         setImage(undefined)
     }
 
-    if (image) {
-        return (
-            <View style={styles.container}>
-                <View style={styles.camera}>
-                    <Image source={{ uri: image }} style={styles.camera}/>
-                    <TouchableOpacity style={styles.button} onPress={sendImage}>
-                        <Text style={styles.text}>Upload image</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={resetImage}>
-                        <Text style={styles.text}>Back</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        )
-    }
+    // if (image) {
+    //     return (
+    //         <View style={styles.container}>
+    //             <View style={styles.camera}>
+    //                 <Image source={{ uri: image }} style={styles.camera}/>
+    //                 <TouchableOpacity style={styles.button} onPress={sendImage}>
+    //                     <Text style={styles.text}>Upload image</Text>
+    //                 </TouchableOpacity>
+    //                 <TouchableOpacity style={styles.button} onPress={resetImage}>
+    //                     <Text style={styles.text}>Back</Text>
+    //                 </TouchableOpacity>
+    //             </View>
+    //         </View>
+    //     )
+    // }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.camera}>
-                <CameraView style={styles.camera} ref={cameraRef}>
-                </CameraView>
-                <TouchableOpacity style={styles.button} onPress={takePicture}>
-                    <Text style={styles.text}>Take picture</Text>
-                </TouchableOpacity>
+        <View className={'flex-1'}>
+            <View className={'flex-1 w-full'}>
+                <CameraView style={{ flexGrow: 1, width: '100%', height: '100%' }} ref={cameraRef}/>
+            </View>
+            <View className={'w-full p-4 flex-row gap-4 justify-between items-center'}>
+                <Button className={''} onPress={takePicture}><Text>Take picture</Text></Button>
+                <Button className={''} size={'icon'} variant={'secondary'}><SlidersHorizontal className={'text-primary'}/></Button>
             </View>
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    message: {
-        textAlign: 'center',
-        paddingBottom: 10,
-    },
-    camera: {
-        flex: 3,
-    },
-    buttonContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        backgroundColor: 'transparent',
-        margin: 64,
-    },
-    button: {
-        flex: 1,
-        alignSelf: 'flex-end',
-        alignItems: 'center',
-    },
-    text: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'black',
-    },
-})
