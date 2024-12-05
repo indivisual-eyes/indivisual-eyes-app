@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from 'expo-camera'
-import { Image, Platform, View } from 'react-native'
+import { ActivityIndicator, Image, Platform, View } from 'react-native'
 import { useRef, useState } from 'react'
 
 import { getUrl } from '@/lib/url'
@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 export default function Camera() {
     const [permission, requestPermission] = useCameraPermissions()
     const [image, setImage] = useState<string>()
+    const [loading, setLoading] = useState<boolean>(false)
 
     const cameraRef = useRef<CameraView>(null)
 
@@ -40,6 +41,7 @@ export default function Camera() {
     }
 
     async function sendImage() {
+        setLoading(true)
         const body = new FormData()
         // @ts-ignore
         body.append('image', {
@@ -76,6 +78,8 @@ export default function Camera() {
         } catch (e) {
             console.log(e)
         }
+
+        setLoading(false)
     }
 
     async function resetImage() {
@@ -85,8 +89,9 @@ export default function Camera() {
     if (image) {
         return (
             <View className={'flex-1'}>
-                <View className={'flex-1 w-full'}>
-                    <Image className={'flex-1 w-full h-full'} source={{ uri: image }}/>
+                <View className={'flex-1 w-full justify-center items-center'}>
+                    <Image className={'flex-1 w-full h-full absolute'} source={{ uri: image }}/>
+                    {loading ? (<ActivityIndicator size={'large'} color={'#FFFFFF'}/>) : <></>}
                 </View>
                 <View className={'w-full p-4 flex-row gap-4 justify-between items-center'}>
                     <Button className={''} onPress={sendImage}><Text>Upload image</Text></Button>

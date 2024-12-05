@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '~/components/ui/button'
 import { Text } from '~/components/ui/text'
@@ -10,6 +10,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function App() {
     const [value, setValue] = useState('Protanopia')
+
+    useEffect(() => {
+        setDefaultValue().then(() => {})
+    }, [])
+
+    async function setDefaultValue() {
+        const cvdType = await AsyncStorage.getItem('cvdType')
+
+        if (cvdType) {
+            setValue(cvdType)
+        }
+    }
 
     function onLabelPress(label: string) {
         return () => {
